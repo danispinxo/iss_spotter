@@ -78,8 +78,43 @@ const fetchISSFlyoverTimes = (coords, callback) => {
     });
 };
 
+const nextISSTimesForMyLocation = () => {
+
+  fetchMyIP((error, ipData) => {
+    if (error) {
+      console.log("It didn't work!:", error);
+      return;
+    }
+    fetchCoordsByIP(ipData, (error, coordinates) => {
+      if (error) {
+        console.log("It didn't work!", error);
+        return;
+      }
+      fetchISSFlyoverTimes(coordinates, (error, flyoverTimes) => {
+        if (error) {
+          console.log("It didn't work!", error);
+          return;
+        }
+
+        for (let time of flyoverTimes) {
+          let dateTime = new Date(0);
+          dateTime.setUTCSeconds(time.risetime);
+
+          console.log(`Next pass at ${dateTime.toString()} for ${time.duration} seconds!`);
+        }
+
+
+        // console.log(dateTime);
+
+        // loop through array
+        // for each item, which is an object, pull out risetime and convert to date using setUTCSeconds
+        // manually covert the date/time string
+        //then output as a string including teh duration
+      });
+    });
+  });
+};
+
 module.exports = {
-  fetchMyIP,
-  fetchCoordsByIP,
-  fetchISSFlyoverTimes
+  nextISSTimesForMyLocation,
 };
