@@ -102,14 +102,6 @@ const nextISSTimesForMyLocation = () => {
 
           console.log(`Next pass at ${dateTime.toString()} for ${time.duration} seconds!`);
         }
-
-
-        // console.log(dateTime);
-
-        // loop through array
-        // for each item, which is an object, pull out risetime and convert to date using setUTCSeconds
-        // manually covert the date/time string
-        //then output as a string including teh duration
       });
     });
   });
