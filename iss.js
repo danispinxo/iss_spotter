@@ -23,4 +23,37 @@ const fetchMyIP = function(callback) {
     });
 };
 
-module.exports = { fetchMyIP };
+const fetchCoordsByIP = (ip, callback) => {
+
+  request(
+    `http://ipwho.is/${ip}`,
+    (error, response, body) => {
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      if (response.statusCode !== 200) {
+        const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
+        console.log(msg, response.statusCode);
+        return;
+      }
+      const ipCoordObject = JSON.parse(body);
+      const coordinates = {};
+      coordinates.latitude = ipCoordObject.latitude;
+      coordinates.longitude = ipCoordObject.longitude;
+      if (ipCoordObject.latitude === undefined) {
+        console.log("Error: Improper IP address submitted.");
+        return;
+      }
+      console.log(coordinates);
+
+    });
+
+};
+
+module.exports = {
+  fetchMyIP,
+  fetchCoordsByIP
+};
