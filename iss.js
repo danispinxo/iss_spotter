@@ -30,13 +30,13 @@ const fetchCoordsByIP = (ip, callback) => {
     (error, response, body) => {
 
       if (error) {
-        console.log(error);
+        callback(error, null);
         return;
       }
 
       if (response.statusCode !== 200) {
         const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
-        console.log(msg, response.statusCode);
+        callback(Error(msg), null);
         return;
       }
       const ipCoordObject = JSON.parse(body);
@@ -44,16 +44,42 @@ const fetchCoordsByIP = (ip, callback) => {
       coordinates.latitude = ipCoordObject.latitude;
       coordinates.longitude = ipCoordObject.longitude;
       if (ipCoordObject.latitude === undefined) {
-        console.log("Error: Improper IP address submitted.");
+        const msg = "Error: Improper IP address submitted.";
+        callback(Error(msg), null);
         return;
       }
-      console.log(coordinates);
+
+      callback(null, coordinates);
+      
 
     });
 
 };
 
+const fetchISSFlyoverTimes = (coords, callback) => {
+
+  request(
+    `https://iss-pass.herokuapp.com/json/?lat=${coords.latitude}&lon=${coords.longitude}`,
+    (error, response, body) => {
+      if (error) {
+        console.log(error);
+      }
+
+      if (response.statusCode !== 200) {
+        const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
+        console.log(msg, response.statusCode);
+        return;
+      }
+
+      const flyoverObject = JSON.parse(body);
+      const flyoverTimes = flyoverObject.response;
+
+      callback(null, flyoverTimes);
+    });
+};
+
 module.exports = {
   fetchMyIP,
-  fetchCoordsByIP
+  fetchCoordsByIP,
+  fetchISSFlyoverTimes
 };
